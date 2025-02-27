@@ -1,0 +1,16 @@
+{
+  "files": {
+    "main.css": "/nutrivis/static/css/main.f855e6bc.css",
+    "main.js": "/nutrivis/static/js/main.cb9d7077.js",
+    "static/js/488.4b0840ad.chunk.js": "/nutrivis/static/js/488.4b0840ad.chunk.js",
+    "static/media/logo.svg": "/nutrivis/static/media/logo.6ce24c58023cc2f8fd88fe9d219db6c6.svg",
+    "index.html": "/nutrivis/index.html",
+    "main.f855e6bc.css.map": "/nutrivis/static/css/main.f855e6bc.css.map",
+    "main.cb9d7077.js.map": "/nutrivis/static/js/main.cb9d7077.js.map",
+    "488.4b0840ad.chunk.js.map": "/nutrivis/static/js/488.4b0840ad.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.f855e6bc.css",
+    "static/js/main.cb9d7077.js"
+  ]
+}
