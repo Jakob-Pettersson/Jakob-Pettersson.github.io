@@ -1,17 +1,15 @@
 ﻿import { useEffect, useRef } from "react";
 import * as d3 from "d3";
 
-function RadialBar({ addedFoodItems, displayedNutrients, goals, hover }) {
+function RadialBar({ addedFoodItems, displayedNutrients, goals, hover,compareActivated }) {
   const svgRef = useRef();
 
   useEffect(() => {
-    if (!addedFoodItems.length) return;
-
-    const width = 600;
-    const height = 600;
+    const width = 700;
+    const height = 700;
     const innerRadius = 30;
     const outerRadius = Math.min(width, height) / 2;
-    const labelsAngle = Math.PI / 7;
+    const labelsAngle = Math.PI / 20;
 
     const nutrientIntake = displayedNutrients.map((nutrient) => {
       const nutrientData = { nutrient, totalIntake: 0 };
@@ -62,29 +60,35 @@ function RadialBar({ addedFoodItems, displayedNutrients, goals, hover }) {
       .domain([0, 1.5]) // ✅ Extended to 150% to see overages
       .range([innerRadius, outerRadius]);
 
-    var barColor = d3.scaleLinear().domain([0, 1]).range(["red", "green"]);
+    var barColor = d3
+      .scaleLinear()
+      .domain([0, 0.5, 1, 1.25, 1.5])
+      .range(["#cb1b1b", "#ffff3f", "#009400", "#ffff3f", "#cb1b1b"]);
 
     let ticks = [0, 0.2, 0.4, 0.6, 0.8, 1];
 
-    svg
-      .append("g")
-      .selectAll("g")
-      .data(nutrientIntake)
-      .enter()
-      .append("path")
-      .attr("fill", barColor(1))
-      .attr("fill-opacity", hover ? 0.3 : 1)
-      .attr(
-        "d",
-        d3
-          .arc()
-          .innerRadius(innerRadius)
-          .outerRadius((d) => yScale(d.totalIntake))
-          .startAngle((d) => xScale(d.nutrient))
-          .endAngle((d) => xScale(d.nutrient) + xScale.bandwidth())
-          .padAngle(0.01)
-          .padRadius(innerRadius)
-      );
+    nutrientIntake.forEach((nutrient) => {
+      svg
+        .append("g")
+        .selectAll("g")
+        .data([nutrient])
+        .enter()
+        .append("path")
+        .attr("fill", barColor(nutrient.totalIntake))
+        .attr("fill-opacity", () => compareActivated ? 0.1 : (hover ? 0.3 : 1))
+        .attr(
+          "d",
+          d3
+            .arc()
+            .innerRadius(innerRadius)
+            .outerRadius((d) => yScale(d.totalIntake))
+            .startAngle((d) => xScale(d.nutrient))
+            .endAngle((d) => xScale(d.nutrient) + xScale.bandwidth())
+            .padAngle(0.01)
+            .padRadius(innerRadius)
+        );
+    });
+
 
     svg
       .selectAll("circle")
@@ -199,13 +203,17 @@ function RadialBar({ addedFoodItems, displayedNutrients, goals, hover }) {
     return () => {
       tooltip.remove();
     };
-  }, [addedFoodItems, displayedNutrients, goals, hover]);
+  }, [addedFoodItems, displayedNutrients, goals, hover, compareActivated]);
 
   return (
-    <div style={{ textAlign: "center" }}>
+    <div style={styles.radialBar}>
       <svg ref={svgRef}></svg>
     </div>
   );
 }
 
 export default RadialBar;
+
+const styles = {
+  radialBar: { textAlign: "center" },
+};

@@ -1,24 +1,23 @@
 ﻿import { useEffect, useRef } from "react";
 import * as d3 from "d3";
 
-function RadarChart({ hoveredItem, displayedNutrients, goals }) {
+function RadarChart({ hoveredItem, displayedNutrients, goals,compareActivated, selectedItems }) {
   const svgRef = useRef();
 
   useEffect(() => {
     if (!hoveredItem) return;
-    const width = 600;
-    const height = 600;
+
+    const width = 700;
+    const height = 700;
     const innerRadius = 30;
     const outerRadius = Math.min(width, height) / 2;
-    const labelsAngle = Math.PI / 7;
+    const labelsAngle = Math.PI / 20;
 
-    const nutrientIntake = displayedNutrients.map((nutrient) => {
-      const nutrientData = { nutrient, intake: 0 };
-      const rdi = goals[nutrient] || 1;
-      nutrientData.intake =
-        (hoveredItem.food[nutrient] * hoveredItem.weight) / (rdi * 100) || 0;
-      return nutrientData;
-    });
+    const itemsToDraw = compareActivated ? selectedItems : hoveredItem ? [hoveredItem] : [];
+
+    if (itemsToDraw.length === 0) return;
+
+
 
     // ✅ Clear previous SVG
     d3.select(svgRef.current).selectAll("*").remove();
@@ -48,6 +47,20 @@ function RadarChart({ hoveredItem, displayedNutrients, goals }) {
 
     let alpha = (2 * Math.PI - labelsAngle) / (2 * displayedNutrients.length);
 
+
+    const colorScale = d3.scaleOrdinal(d3.schemeCategory10);
+
+    
+
+    const nutrientIntake = displayedNutrients.map((nutrient) => {
+      const nutrientData = { nutrient, intake: 0 };
+      const rdi = goals[nutrient] || 1;
+      nutrientData.intake =
+        (hoveredItem.food[nutrient] * hoveredItem.weight) / (rdi * 100) || 0;
+      return nutrientData;
+    });
+    
+    
     let linePoints = nutrientIntake.map((entry) => [
       Math.sin(xScale(entry.nutrient) + alpha) * yScale(entry.intake),
       -Math.cos(xScale(entry.nutrient) + alpha) * yScale(entry.intake),
@@ -57,6 +70,7 @@ function RadarChart({ hoveredItem, displayedNutrients, goals }) {
       .append("path")
       .attr("d", d3.line()(linePoints))
       .attr("stroke", "#4590bb")
+      .attr("stroke-width", 3)
       // with multiple points defined, if you leave out fill:none,
       // the overlapping space defined by the points is filled with
       // the default value of 'black'

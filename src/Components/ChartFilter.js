@@ -1,7 +1,7 @@
 // src/Filter.js
 import { useState, useEffect } from "react";
 
-function ChartFilter({ onSelectionChange }) {
+function ChartFilter({ onSelectionChange, nutrientOptions }) {
   const options = [
     "Energy",
     "Fat",
@@ -60,7 +60,7 @@ function ChartFilter({ onSelectionChange }) {
     "Selenium",
     "Zinc",
   ];
-  const macros = ["Energy", "Fat", "Protein", "Carbohydrates"];
+  const macros = ["Energy", "Fat", "Protein", "Carbohydrates","Fibre"];
   const [selectedOptions, setSelectedOptions] = useState(macros);
 
   const handleOptionClick = (option) => {
@@ -78,7 +78,7 @@ function ChartFilter({ onSelectionChange }) {
 
   return (
     <div style={styles.listContainer}>
-      {options.map((option) => (
+      {nutrientOptions.map((option) => (
         <div
           key={option}
           style={styles.listItem}

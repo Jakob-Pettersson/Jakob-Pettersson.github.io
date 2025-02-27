@@ -6,8 +6,12 @@ function AddedFoodTable({
   onRemoveItem,
   onWeightChange,
   setHoveredItem,
+  compareActivated,
+  selectedItems,
+  onSelectedItems,
 }) {
   const [editingWeight, setEditingWeight] = useState(null);
+ 
 
   return (
     <div style={styles.listContainer}>
@@ -22,6 +26,9 @@ function AddedFoodTable({
             index={index}
             setHoveredItem={setHoveredItem}
             key={index}
+            compareActivated={compareActivated}
+            selectedItems={selectedItems}
+            onSelectedItems={onSelectedItems}
           />
         ))
       ) : (

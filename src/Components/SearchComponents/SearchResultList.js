@@ -12,9 +12,6 @@ const SearchResultList = ({ results, onAddFood }) => {
 
   const handleAddFood = () => {
     if (selectedItem) {
-      console.log("====================================");
-      console.log(weight);
-      console.log("====================================");
       onAddFood(selectedItem, weight); // Pass data to parent
       setSelectedItem(null); // Reset selected item after adding
       setWeight("100"); // Reset weight

@@ -19,7 +19,7 @@ function SearchForm({ onAddFood }) {
 
     if (input) {
       const results = foodDataSearch.filter((item) =>
-        item.name.toLowerCase().startsWith(input.toLowerCase())
+        item.name.toLowerCase().includes(input.toLowerCase())
       );
       setFilteredResults(results);
     } else {

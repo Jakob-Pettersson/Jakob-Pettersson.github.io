@@ -1,3 +1,6 @@
+
+
+
 function AddedFoodListItem({
   onRemoveItem,
   onWeightChange,
@@ -6,7 +9,12 @@ function AddedFoodListItem({
   listItem,
   index,
   setHoveredItem,
+  compareActivated,
+  selectedItems,
+  onSelectedItems,
 }) {
+
+
   const handleHover = (e) => {
     if (e.type === "mouseover") {
       setHoveredItem(listItem);
@@ -15,12 +23,62 @@ function AddedFoodListItem({
     }
   };
 
+  console.log(compareActivated);
+  console.log(selectedItems);
+
+  const selectedItem = selectedItems.find((item) => item.id === listItem.food.id);
+  console.log("Selected Item for", listItem.food.name, selectedItem); 
+  const isSelected =
+  compareActivated &&
+  Array.isArray(selectedItems) &&
+  selectedItems.some((item) => item.id === listItem.food.id);
+
+
+
+
+  const handleSelected = () => {
+    if (!compareActivated) return;
+  
+    const colorPalette = ["#ff5733", "#33ff57", "#3357ff", "#ff33a1", "#a133ff", "#33fff0"];
+  
+    // ✅ Check if the item is already selected
+    const existingItem = selectedItems.find((item) => item.id === listItem.food.id);
+  
+    let newSelectedItems;
+  
+    if (existingItem) {
+      // ✅ Remove the item while keeping others unchanged
+      newSelectedItems = selectedItems.filter((item) => item.id !== listItem.food.id);
+    } else {
+      // ✅ Check if the item already has a color assigned
+      const usedColors = selectedItems.map((item) => item.color);
+      const availableColor = colorPalette.find((color) => !usedColors.includes(color)) || "#000000"; // Fallback color
+  
+      const newItem = {
+        id: listItem.food.id,
+        weight: listItem.weight,
+        color: availableColor, // ✅ Assigns a new color only when needed
+      };
+  
+      newSelectedItems = [...selectedItems, newItem];
+    }
+  
+    // ✅ Send updated selected items with their colors
+    onSelectedItems(newSelectedItems);
+  };
+
   return (
     <div
       key={index}
-      style={styles.listItem}
+      style={{
+        ...styles.listItem,
+        ...(isSelected ? styles.selectedItem : {}),
+        backgroundColor: isSelected ? selectedItem?.color || "#C3E6CB" : "#EEFAF4",
+        cursor: compareActivated ? "pointer" : "default",
+      }}
       onMouseOver={handleHover}
       onMouseOut={handleHover}
+      onClick={compareActivated ? handleSelected : undefined}
     >
       <button
         style={styles.removeButton}
@@ -77,6 +135,15 @@ const styles = {
     gap: "10px",
     marginBottom: "10px",
     position: "relative",
+    borderStyle: "solid",
+    borderWidth: "0px 0px 0px 0px",
+    borderColor: "#ddd",
+  },
+  selectedItem: {
+    backgroundColor: "#C3E6CB", // Change background when selected
+    borderColor: "#49A974",
+    borderWidth: "2px",
+    borderStyle: "solid",
   },
 
   foodGroup: {

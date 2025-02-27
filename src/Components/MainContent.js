@@ -5,31 +5,40 @@ import fullfoodData from "../Data/fullFoodData.json";
 import GoalSettingPresenter from "./GoalSettingPresenter";
 import ChartFilter from "./ChartFilter";
 import Charts from "./ChartComponents/Charts";
-import ComparisonRadarChart from "./ChartComponents/ComparisonRadarChart";
 
 function MainContent() {
+  const [selectedItems, setSelectedItems] = useState([])
+  const [comparingItem, setComparingItem] = useState([])
   const [recommendedDailyIntake, setRecommendedDailyIntake] = useState({
-    Calcium: 1000,
-    Potassium: 4700,
-    Magnesium: 400,
-    Sodium: 2300,
-    Selenium: 55,
-    Zinc: 11,
-    "Vitamin E": 15,
-    "Vitamin K": 120,
-    "Vitamin C": 90,
-    Iron: 18,
-    Fibre: 28,
-    Protein: 50,
-    Carbohydrates: 275,
-    "Sugar total": 50,
-    Energy: 1000,
-    Fat: 300,
+    "Calcium": 1000,
+    "Carbohydrates": 280.6,
+    "Energy": 2245,
+    "Fat": 87.3,
+    "Fibre": 30,
+    "Protein": 45.65,
+    "Salt": 5.75,
+    "Sodium": 2300,
+    "Vitamin C": 95,
+    "Vitamin D": 10,
+    "Zinc": 9.7
   });
 
-  const [foodItems, setFoodItems] = useState([]);
 
-  const nutrientOptions = [
+
+  const [nutrientOptions, setNutrientOptions] = useState(
+    [  "Calcium",
+      "Carbohydrates",
+      "Energy",
+      "Fat",
+      "Fibre",
+      "Protein",
+      "Salt",
+      "Sodium",
+      "Vitamin C",
+      "Vitamin D",
+      "Zinc",])
+
+  const nutrientOptions02 = [
     "Energy",
     "Fat",
     "Protein",
@@ -87,19 +96,25 @@ function MainContent() {
     "Selenium",
     "Zinc",
   ];
-
+  const [foodItems, setFoodItems] = useState([]);
   const [showSearchBar, setShowSearchBar] = useState(false);
   const [displayedNutrients, setDisplayedNutrients] = useState(nutrientOptions);
-  const toggleSearchBar = () => setShowSearchBar(!showSearchBar);
-
-  const [isSidebarVisible, setIsSidebarVisible] = useState(false); // Track sidebar visibility
-
+  const [isSidebarVisible, setIsSidebarVisible] = useState(false); 
   const [hoveredItem, setHoveredItem] = useState(null);
+  const [compareActivated, setCompareActivated] = useState(false);
 
+  const toggleSearchBar = () => setShowSearchBar(!showSearchBar);
   const toggleSidebar = () => {
+    setShowSearchBar(false)
     setIsSidebarVisible((prev) => !prev); // Toggle visibility
   };
 
+
+  const toggleCompareMode = () => {
+    setSelectedItems([])
+    setCompareActivated((prev) => !prev);
+
+  }
   const handleWeightChange = (foodId, newWeight) => {
     setFoodItems((prevFoodItems) =>
       prevFoodItems.map((item) =>
@@ -108,17 +123,20 @@ function MainContent() {
     );
   };
 
+  const handleRecommendedIntake = (filteredDRI) => {
+    console.log(filteredDRI);
+    setNutrientOptions(Object.keys(filteredDRI));
+    setRecommendedDailyIntake(filteredDRI)
+
+    
+  }
+
   const handleDisplayedChange = (selectedOptions) => {
     setDisplayedNutrients(selectedOptions);
   };
 
   const handleAddFood = (food, weight) => {
-    console.log("Food:", food);
-    console.log("Weight:", weight);
-
     const foundFood = fullfoodData.find((item) => item.id === food.id);
-    console.log("Found Food:", foundFood);
-
     if (foundFood) {
       // Store the food object inside a `food` key along with weight
       setFoodItems([...foodItems, { food: foundFood, weight }]);
@@ -139,13 +157,37 @@ function MainContent() {
     );
   };
 
+  const handleSelectedItems = (coloredItems) => {
+    if (!Array.isArray(coloredItems)) {
+      console.error("updatedSelectedItems is not an array:", coloredItems);
+      return;
+    }
+  
+
+
+  
+    setSelectedItems(coloredItems);
+  
+
+    const selectedIds = coloredItems.map((item) => item.id);
+  
+
+    const foundFoods = fullfoodData.filter((item) => selectedIds.includes(item.id));
+
+    const comparingItems = coloredItems
+      .map((selectedItem) => {
+        const foundFood = foundFoods.find((food) => food.id === selectedItem.id);
+        return foundFood ? { food: foundFood, weight: selectedItem.weight, color: selectedItem.color } : null;
+      })
+      .filter(Boolean); // Remove null values if any food is not found
+  
+    setComparingItem(comparingItems);
+  };
+  
+
   return (
     <>
-      <ComparisonRadarChart
-        displayedNutrients={displayedNutrients}
-        goals={recommendedDailyIntake}
-        hoveredItem={hoveredItem}
-      />
+    {/* {isSidebarVisible && <div style={styles.overlay} onClick={toggleSidebar}></div>} */}
       <div style={styles.mainContainer}>
         {/* Toggle Sidebar Button */}
         {!showSearchBar ? (
@@ -170,6 +212,7 @@ function MainContent() {
         <div style={styles.visContainer}>
           <div style={styles.foodTableContainer}>
             <div style={styles.foodTableTitleWrap}>
+             
               <div style={styles.foodTableTitle}>Food Table</div>
             </div>
             <AddedFoodTable
@@ -177,7 +220,19 @@ function MainContent() {
               onRemoveItem={handleRemoveFood}
               onWeightChange={handleWeightChange}
               setHoveredItem={setHoveredItem}
+              compareActivated={compareActivated}
+              selectedItems={selectedItems}
+              onSelectedItems={handleSelectedItems}
             />
+            <button
+      onClick={toggleCompareMode}
+      style={{ 
+        ...styles.compareBtn, 
+        backgroundColor: compareActivated ? "#49A974" : "#ccc" 
+      }}
+    >
+      {compareActivated ? "Disable Compare Mode" : "Enable Compare Mode"}
+    </button>
           </div>
           <div style={styles.chartContainer}>
             <Charts
@@ -185,6 +240,9 @@ function MainContent() {
               displayedNutrients={displayedNutrients}
               goals={recommendedDailyIntake}
               hoveredItem={hoveredItem}
+              selectedItems={selectedItems}
+              compareActivated={compareActivated}
+              comparingItem={comparingItem}
             />
             <button style={styles.settingBtn} onClick={toggleSidebar}>
               Goal Setting
@@ -194,16 +252,16 @@ function MainContent() {
             <div style={styles.foodTableTitleWrap}>
               <div style={styles.nutrientsTitle}>Displayed Nutrients</div>
             </div>
-            <ChartFilter onSelectionChange={handleDisplayedChange} />
+            <ChartFilter onSelectionChange={handleDisplayedChange} nutrientOptions={nutrientOptions} />
           </div>
           {isSidebarVisible && (
             <div style={styles.sidebar}>
               <button onClick={toggleSidebar}>Close Goal Setting</button>
-              <h3>Sidebar Content</h3>
-              <p>Here are the goal-setting options...</p>
+              <h3>Goal settings</h3>
               <GoalSettingPresenter
                 recommendedDailyIntake={recommendedDailyIntake}
                 setRecommendedDailyIntake={setRecommendedDailyIntake}
+                onReceivedRecommendedIntake={handleRecommendedIntake}
               />
             </div>
           )}
@@ -215,6 +273,15 @@ function MainContent() {
 
 // 🔹 Styles
 const styles = {
+  overlay: {
+    position: "fixed",
+    top: 0,
+    left: 0,
+    width: "83vw",
+    height: "100vh",
+    backgroundColor: "rgba(0, 0, 0, 0.5)", // Dark overlay
+    zIndex: 999, // Ensures it's above everything else
+  },
   mainContainer: {
     display: "flex",
     flexDirection: "column", // 🔹 Stack items vertically
@@ -285,6 +352,17 @@ const styles = {
     textAlign: "left",
     // paddingBottom: "10px",
   },
+  compareBtn:{
+    padding: "10px 20px",
+    fontSize: "16px",
+    fontWeight: "bold",
+    borderRadius: "10px",
+    border: "none",
+    cursor: "pointer",
+   
+    color: "white",
+    transition: "background 0.3s ease",
+  },
   nutrientsTitle: {
     fontSize: "18px",
     fontWeight: "bold",
@@ -321,6 +399,7 @@ const styles = {
     backgroundColor: "#f0f0f0",
     padding: "20px",
     borderLeft: "1px solid #ddd",
+    zIndex:2
   },
 };
 
