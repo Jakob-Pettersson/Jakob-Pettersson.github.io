@@ -18,7 +18,6 @@ function RadarChart({ hoveredItem, displayedNutrients, goals,compareActivated, s
     if (itemsToDraw.length === 0) return;
 
 
-
     // ✅ Clear previous SVG
     d3.select(svgRef.current).selectAll("*").remove();
 
@@ -69,7 +68,7 @@ function RadarChart({ hoveredItem, displayedNutrients, goals,compareActivated, s
     svg
       .append("path")
       .attr("d", d3.line()(linePoints))
-      .attr("stroke", "#4590bb")
+      .attr("stroke", "#1661D9")
       .attr("stroke-width", 3)
       // with multiple points defined, if you leave out fill:none,
       // the overlapping space defined by the points is filled with

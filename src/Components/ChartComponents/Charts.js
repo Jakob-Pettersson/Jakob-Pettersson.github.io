@@ -4,9 +4,7 @@ import RadarChartCompare from "./RadarChartCompare";
 
 function Charts({ addedFoodItems, displayedNutrients, goals, hoveredItem, selectedItems,compareActivated, comparingItem}) {
 
-  console.log(selectedItems);
-  console.log(addedFoodItems);
-  console.log(comparingItem);
+
 
 
 
@@ -20,6 +18,7 @@ function Charts({ addedFoodItems, displayedNutrients, goals, hoveredItem, select
             displayedNutrients={displayedNutrients}
             goals={goals}
             hoveredItem={hoveredItem}
+            selectedItems={selectedItems}
           />
         </div>
       )}

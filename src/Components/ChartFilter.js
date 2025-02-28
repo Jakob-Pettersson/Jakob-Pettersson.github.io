@@ -61,7 +61,7 @@ function ChartFilter({ onSelectionChange, nutrientOptions }) {
     "Zinc",
   ];
   const macros = ["Energy", "Fat", "Protein", "Carbohydrates","Fibre"];
-  const [selectedOptions, setSelectedOptions] = useState(macros);
+  const [selectedOptions, setSelectedOptions] = useState(["Energy", "Carbohydrates", "Salt", "Vitamin C"]);
 
   const handleOptionClick = (option) => {
     setSelectedOptions(

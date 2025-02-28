@@ -23,11 +23,8 @@ function AddedFoodListItem({
     }
   };
 
-  console.log(compareActivated);
-  console.log(selectedItems);
 
   const selectedItem = selectedItems.find((item) => item.id === listItem.food.id);
-  console.log("Selected Item for", listItem.food.name, selectedItem); 
   const isSelected =
   compareActivated &&
   Array.isArray(selectedItems) &&
@@ -73,7 +70,7 @@ function AddedFoodListItem({
       style={{
         ...styles.listItem,
         ...(isSelected ? styles.selectedItem : {}),
-        backgroundColor: isSelected ? selectedItem?.color || "#C3E6CB" : "#EEFAF4",
+        borderColor: isSelected ? selectedItem?.color || "#C3E6CB" : "#EEFAF4",
         cursor: compareActivated ? "pointer" : "default",
       }}
       onMouseOver={handleHover}

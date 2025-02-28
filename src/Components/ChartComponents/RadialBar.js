@@ -84,7 +84,7 @@ function RadialBar({ addedFoodItems, displayedNutrients, goals, hover,compareAct
             .outerRadius((d) => yScale(d.totalIntake))
             .startAngle((d) => xScale(d.nutrient))
             .endAngle((d) => xScale(d.nutrient) + xScale.bandwidth())
-            .padAngle(0.01)
+            .padAngle(0.03)
             .padRadius(innerRadius)
         );
     });
